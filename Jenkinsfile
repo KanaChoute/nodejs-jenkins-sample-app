@@ -36,13 +36,15 @@ pipeline {
             }
         }
         
-        steps {
+        stage('Deploy') {
+            steps {
                 // Arrête et supprime l'ancien conteneur s'il existe
                 sh "docker stop ${CONTAINER_NAME} || true"
                 sh "docker rm ${CONTAINER_NAME} || true"
                 // Démarre le nouveau conteneur avec la nouvelle version
                 sh "docker run -d --name ${CONTAINER_NAME} -p 3000:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
+        }
     }
     post {
         always {
