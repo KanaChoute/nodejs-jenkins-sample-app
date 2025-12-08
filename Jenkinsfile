@@ -32,7 +32,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 // Construit l'image Docker avec le tag BUILD_NUMBER
-                sh "docker build -t nodejs-jenkins-sample-app ."
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
             }
         }
         
