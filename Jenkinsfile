@@ -9,26 +9,38 @@ pipeline {
     stages {
         stage('Checkout') {
             // TODO: Récupérer le code source
+            check scm
         }
         
         stage('Install Dependencies') {
             // TODO: Installer les dépendances
+            sh 'npm ci'
         }
         
         stage('Run Tests') {
-            // TODO: Lancer les tests
+            steps {
+                // Exécute les tests unitaires définis dans package.json
+                sh 'npm test'
+            }
         }
         
         stage('Build Docker Image') {
-            // TODO: Construire l'image Docker
+            steps {
+                // Construit l'image Docker avec le tag BUILD_NUMBER
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+            }
         }
         
         stage('Deploy') {
-            // TODO: Déployer le conteneur
-            // Arrêter l'ancien conteneur s'il existe 
-            // Démarrer le nouveau conteneur avec la nouvelle version
+            steps {
+                // Arrête et supprime l'ancien conteneur s'il existe
+                sh "docker stop ${CONTAINER_NAME} || true"
+                sh "docker rm ${CONTAINER_NAME} || true"
+                // Démarre le nouveau conteneur avec la nouvelle version
+                sh "docker run -d --name ${CONTAINER_NAME} -p 3000:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+            }
         }
-    }
     
     post {
         // TODO: Partie bonus
