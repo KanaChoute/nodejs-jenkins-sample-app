@@ -9,12 +9,16 @@ pipeline {
     stages {
         stage('Checkout') {
             // TODO: Récupérer le code source
-            check scm
+            steps {
+                git 'https://github.com/KanaChoute/nodejs-sample-app.git'
+            }
         }
         
         stage('Install Dependencies') {
             // TODO: Installer les dépendances
-            sh 'npm ci'
+            steps {
+                sh 'npm install'
+            }
         }
         
         stage('Run Tests') {
