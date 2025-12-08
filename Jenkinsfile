@@ -9,17 +9,16 @@ pipeline {
     
     stages {
         stage('Checkout') {
-            // TODO: Récupérer le code source
             steps {
-                git url: 'https://github.com/KanaChoute/nodejs-jenkins-sample-app.git',
-                    branch: 'docker'
+                // Récupère le code depuis le repo Git configuré dans Jenkins
+                checkout scm
             }
         }
         
         stage('Install Dependencies') {
-            // TODO: Installer les dépendances
             steps {
-                sh 'npm install'
+                // Installe les dépendances Node.js du package.json
+                sh 'npm ci'
             }
         }
         
@@ -40,28 +39,12 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                script {
-                    sh """
-                    docker stop ${CONTAINER_NAME} || true
-                    docker rm ${CONTAINER_NAME} || true
-
-                    docker run -d\
-                        --name ${CONTAINER_NAME}\
-                        -p 3000:3000 \
-                        ${DOCKER_IMAGE}:${DOCKER_TAG}
-                    """
+                // Arrête et supprime l'ancien conteneur s'il existe
+                sh "docker stop ${CONTAINER_NAME} || true"
+                sh "docker rm ${CONTAINER_NAME} || true"
+                // Démarre le nouveau conteneur avec la nouvelle version
+                sh "docker run -d --name ${CONTAINER_NAME} -p 3000:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
-        }
-    }
-    post {
-        always {
-            echo 'Pipeline finished.'
-        }
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
