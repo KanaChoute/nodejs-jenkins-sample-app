@@ -27,22 +27,26 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 // Construit l'image Docker avec le tag BUILD_NUMBER
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                sh "docker build -t nodejs-jenkins-sample-app ."
             }
         }
         
         stage('Deploy') {
             steps {
                 // Arrête et supprime l'ancien conteneur s'il existe
-                sh "docker stop ${CONTAINER_NAME} || true"
-                sh "docker rm ${CONTAINER_NAME} || true"
-                // Démarre le nouveau conteneur avec la nouvelle version
-                sh "docker run -d --name ${CONTAINER_NAME} -p 3000:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                sh 'echo "Deploying application..."'
             }
         }
     
     post {
-        // TODO: Partie bonus
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
     }
 }
