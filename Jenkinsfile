@@ -37,7 +37,7 @@ pipeline {
                 sh 'echo "Deploying application..."'
             }
         }
-    
+    }
     post {
         always {
             echo 'Pipeline finished.'
@@ -49,5 +49,4 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-}
 }
