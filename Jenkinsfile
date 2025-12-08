@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             // TODO: Récupérer le code source
             steps {
-                git 'https://github.com/KanaChoute/nodejs-sample-app.git',
+                git url: 'https://github.com/KanaChoute/nodejs-sample-app.git',
                     branch: 'docker'
             }
         }
